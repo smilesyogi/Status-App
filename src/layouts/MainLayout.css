@@ -1,0 +1,63 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  .content {
+    padding: 0;
+  }
+  
+  .header {
+    background-color: #343a40;  /* Dark header background */
+    color: white;  /* White text color */
+    text-align: center;
+  }
+  
+  .sidebar {
+    background-color: #f8f9fa;  /* Light gray background */
+    padding: 10px;
+  }
+
+  .sidebar-link {
+    text-decoration: none; /* Remove underline */
+    color: white; /* Text color */
+    background-color: #007bff; /* Button background color */
+    display: inline-block;
+    text-align: center;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  .sidebar-link:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    color: white; /* Keep text white */
+  }
+  
+  .dashboard {
+    background-color: #fff;  /* White background for the dashboard */
+    padding: 20px;
+
+    overflow-y: auto;  /* Allows scrolling if content overflows */
+  }
+  
+  h2 {
+    margin-top: 0;
+  }
+  
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  li {
+    margin: 10px 0;
+  }
+  
+  h1 {
+    margin: 0;
+    font-size: 2rem;
+  }
+  .app-name{
+    color: #fff !important;
+  }
