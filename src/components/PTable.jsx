@@ -41,15 +41,18 @@ const PTable = () => {
   ];
 
   const currentStatusOptions = [
-    { label: "Investigating", color: "warning", icon: <FaSearch /> },
-    { label: "Identified", color: "warning", icon: <FaTools /> },
     { label: "Resolved", color: "success", icon: <FaCheck /> },
+    { label: "Identified", color: "warning", icon: <FaTools /> },
+    { label: "Investigating", color: "warning", icon: <FaSearch /> }
+
   ];
 
   const calculateStatusCounts = () => {
     return services.reduce(
       (acc, service) => {
-        acc[service.status.replace(" ", "").toLowerCase()]++;
+        if (service && service.status) { 
+          acc[service.status.replace(" ", "").toLowerCase()]++;
+        }
         return acc;
       },
       { operational: 0, degradedperformance: 0, partialoutage: 0, majoroutage: 0 }
@@ -76,19 +79,19 @@ const PTable = () => {
   };
 
   const renderStatus = (status) => {
-    const option = statusOptions.find((opt) => opt.label === status);
+    const option = statusOptions.find((opt) => opt.label === status) || statusOptions[0];  // Default to 'Operational' if status is empty or invalid
     return (
       <Badge bg={option.color} className="d-flex align-items-center gap-2">
-        {option.icon} {status}
+        {option.icon} {status || "Operational"}  {/* Fallback to 'Operational' if status is empty */}
       </Badge>
     );
   };
-
+  
   const renderCurrentStatus = (currentStatus) => {
-    const option = currentStatusOptions.find((opt) => opt.label === currentStatus);
+    const option = currentStatusOptions.find((opt) => opt.label === currentStatus) || currentStatusOptions[0]; // Default to 'Resolved' if currentStatus is empty or invalid
     return (
       <Badge bg={option.color} className="d-flex align-items-center gap-2">
-        {option.icon} {currentStatus}
+        {option.icon} {currentStatus || "Resolved"}  {/* Fallback to 'Resolved' if currentStatus is empty */}
       </Badge>
     );
   };
@@ -142,13 +145,19 @@ const PTable = () => {
       axios
         .post(apiUrl, {
           serviceName: newServiceName,
-          status: "Operational",
-          currentStatus: "Resolved",
+          status: "",  // Can be left empty in the request, since we'll reload data
+          currentStatus: "",  // Can be left empty in the request, since we'll reload data
           lastUpdated: new Date().toLocaleString(),
         })
-        .then((response) => {
-          setServices((prevServices) => [...prevServices, response.data]);
-          setNewServiceName("");
+        .then(() => {
+          // Reload services from the API to ensure the data is up to date
+          axios
+            .get(apiUrl)
+            .then((response) => {
+              setServices(response.data);
+              setNewServiceName("");  // Clear the input field after adding
+            })
+            .catch((error) => console.error("Error fetching updated services:", error));
         })
         .catch((error) => console.error("Error adding service:", error));
     }
