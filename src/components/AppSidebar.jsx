@@ -1,12 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ShieldCheck } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -14,22 +12,28 @@ import {
 } from "@/components/ui/sidebar";
 
 const items = [
-  { title: "Dashboard", url: "/", icon: "LayoutDashboard" },
-  { title: "Services", url: "/overview", icon: "ServerCog" },
-  { title: "Incidents", url: "/about", icon: "ShieldAlert" },
+  { title: "Dashboard", url: "/overview", icon: "LayoutDashboard" },
+  { title: "Services", url: "/", icon: "ServerCog" },
+  { title: "Incidents", url: "/incidents", icon: "ShieldAlert" },
+  { title: "Maintenance", url: "/maintenance", icon: "Cog" },
+  { title: "Teams", url: "/teams", icon: "Users" },
+  { title: "Settings", url: "/settings", icon: "Settings2" },
+  { title: "About", url: "/about", icon: "Info" }
+
 ];
 
 // Ensure the icons are imported from lucide-react
-import {
-  LayoutDashboard,
-  ServerCog,
-  ShieldAlert,
-} from "lucide-react";
+import { Cog, LayoutDashboard, ServerCog, Settings2, ShieldAlert, Users,Info } from "lucide-react"
+
 
 const icons = {
   LayoutDashboard,
   ServerCog,
   ShieldAlert,
+  Cog,
+  Users,
+  Settings2,
+  Info
 };
 
 const AppSidebar = () => {
@@ -39,7 +43,7 @@ const AppSidebar = () => {
         <SidebarContent>
           <SidebarGroup className="p-0">
             <SidebarGroupContent>
-              <SidebarMenu  >
+              <SidebarMenu className="p-0" >
                 {items.map((item) => {
                   const IconComponent = icons[item.icon];
                   return (

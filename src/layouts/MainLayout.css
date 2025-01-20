@@ -36,7 +36,7 @@ html, body {
   
   .dashboard {
     background-color: #fff;  /* White background for the dashboard */
-    padding: 20px;
+    padding: 5px;
 
     overflow-y: auto;  /* Allows scrolling if content overflows */
   }

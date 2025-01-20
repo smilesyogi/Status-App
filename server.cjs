@@ -26,6 +26,25 @@ db.prepare(`
 `).run();
 console.log('Services table ensured.');
 
+// // Drop the incidents table if it exists
+// db.prepare(`DROP TABLE IF EXISTS incidents`).run();
+// console.log('Incidents table dropped if it existed.');
+
+// Recreate the incidents table with serviceId column
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS incidents (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'Investigating',
+    createdAt TEXT NOT NULL,
+    lastUpdated TEXT NOT NULL,
+    serviceId INTEGER,
+    FOREIGN KEY (serviceId) REFERENCES services(id) ON DELETE SET NULL
+  );
+`).run();
+console.log('Incidents table recreated with serviceId column.');
+
 // Ensure admin_emails table
 db.prepare(`
   CREATE TABLE IF NOT EXISTS admin_emails (
@@ -45,7 +64,6 @@ const handleNotFound = (res, changes, message) => {
 };
 
 // CRUD for Services
-
 // Create Service
 app.post('/services', (req, res) => {
   const { serviceName, status, currentStatus, lastUpdated } = req.body;
@@ -100,8 +118,97 @@ app.delete('/services/:id', (req, res) => {
   }
 });
 
-// CRUD for Admin Emails
+// CRUD for Incidents
+// Create Incident
+app.post('/incidents', (req, res) => {
+  const { title, description, status, createdAt, lastUpdated, serviceId } = req.body;
 
+  // Query to get the current status of the related service
+  const serviceStmt = db.prepare(`SELECT currentStatus FROM services WHERE id = ?`);
+  const service = serviceStmt.get(serviceId);
+
+  // Set the incident status to the provided status, or default to 'Investigating'
+  const incidentStatus = status || (service ? service.currentStatus : 'Investigating');
+
+  // Start a transaction to ensure both the incident and service current status are updated together
+  const transaction = db.transaction(() => {
+    try {
+      // Insert the incident into the incidents table
+      const stmt = db.prepare(
+        `INSERT INTO incidents (title, description, status, createdAt, lastUpdated, serviceId) VALUES (?, ?, ?, ?, ?, ?)`
+      );
+      const info = stmt.run(title, description, incidentStatus, createdAt, lastUpdated, serviceId);
+
+      // Update the service currentStatus to match the incident status
+      const updateServiceStmt = db.prepare(
+        `UPDATE services SET currentStatus = ?, lastUpdated = ? WHERE id = ?`
+      );
+      updateServiceStmt.run(incidentStatus, lastUpdated, serviceId);
+
+      // Commit the transaction (both the incident creation and service current status update)
+      return { incidentId: info.lastInsertRowid };
+    } catch (err) {
+      throw new Error(err.message);
+    }
+  });
+
+  try {
+    const result = transaction();
+    res.status(201).json({ incidentId: result.incidentId });
+  } catch (err) {
+    handleDatabaseError(res, err);
+  }
+});
+
+
+// Read Incidents
+app.get('/incidents', (req, res) => {
+  try {
+    const stmt = db.prepare(`SELECT * FROM incidents`);
+    const incidents = stmt.all();
+    res.json(incidents);
+  } catch (err) {
+    handleDatabaseError(res, err);
+  }
+});
+
+// Update Incident
+app.put('/incidents/:id', (req, res) => {
+  const { id } = req.params;
+  const { title, description, status, lastUpdated, serviceId } = req.body;
+
+  // You can query the service status here
+  const serviceStmt = db.prepare(`SELECT status FROM services WHERE id = ?`);
+  const service = serviceStmt.get(serviceId); // Assuming serviceId is passed in the incident update
+
+  const incidentStatus = status || (service ? service.status : 'Investigating');  // Default to service status if not provided
+
+  try {
+    const stmt = db.prepare(
+      `UPDATE incidents SET title = ?, description = ?, status = ?, lastUpdated = ? WHERE id = ?`
+    );
+    const info = stmt.run(title, description, incidentStatus, lastUpdated, id);
+    handleNotFound(res, info.changes, 'Incident not found');
+    res.json({ updated: info.changes });
+  } catch (err) {
+    handleDatabaseError(res, err);
+  }
+});
+
+// Delete Incident
+app.delete('/incidents/:id', (req, res) => {
+  const { id } = req.params;
+  try {
+    const stmt = db.prepare(`DELETE FROM incidents WHERE id = ?`);
+    const info = stmt.run(id);
+    handleNotFound(res, info.changes, 'Incident not found');
+    res.json({ deleted: info.changes });
+  } catch (err) {
+    handleDatabaseError(res, err);
+  }
+});
+
+// CRUD for Admin Emails
 // Create Admin Email
 app.post('/admin_emails', (req, res) => {
   const { email } = req.body;

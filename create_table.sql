@@ -11,3 +11,13 @@ CREATE TABLE IF NOT EXISTS AdminEmails (
     email TEXT NOT NULL UNIQUE,
     added_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+  CREATE TABLE IF NOT EXISTS incidents (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'Investigating',
+    createdAt TEXT NOT NULL,
+    lastUpdated TEXT NOT NULL,
+    serviceId INTEGER,
+    FOREIGN KEY (serviceId) REFERENCES services(id) ON DELETE SET NULL
+  );

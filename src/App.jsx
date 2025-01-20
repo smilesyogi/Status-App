@@ -11,6 +11,12 @@ import Overview from './components/Overview';
 import About from './components/About';
 import AdminUserManager from './components/AdminUserManager';
 
+// New imports
+import Teams from './components/Teams';
+import Settings from './components/Settings';
+import Maintenance from './components/Maintenance';
+import Incidents from './components/Incidents';
+
 const App = () => {
   const { isAuthenticated, user } = useAuth0();
 
@@ -18,19 +24,21 @@ const App = () => {
     <ServicesProvider>
       <Router>
         <div>
-          {isAuthenticated ? '' : <h1>Status Page App</h1>}
+          {isAuthenticated ? '' : <h1 style={{ textAlign: 'center' }}>Status Page App</h1>}
           <Routes>
             <Route
               path="/"
               element={
                 isAuthenticated ? (
-                    <ProtectedRoute>
-                      <MainLayout>
-                        <Dashboard user={user} />
-                      </MainLayout>
-                    </ProtectedRoute> 
+                  <ProtectedRoute>
+                    <MainLayout>
+                      <Dashboard user={user} />
+                    </MainLayout>
+                  </ProtectedRoute>
                 ) : (
-                  <LoginButton />
+                  <div style={{ textAlign: 'center' }}>
+                    <LoginButton />
+                  </div>
                 )
               }
             />
@@ -70,12 +78,56 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
+
+            {/* Render Admin User Manager inside MainLayout */}
             <Route
               path="/owner"
               element={
                 <ProtectedRoute>
                   <MainLayout>
                     <AdminUserManager />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+
+            {/* New Routes */}
+            <Route
+              path="/teams"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Teams />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Settings />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/maintenance"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Maintenance />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/incidents"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Incidents />
                   </MainLayout>
                 </ProtectedRoute>
               }

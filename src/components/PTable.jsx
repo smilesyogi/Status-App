@@ -7,7 +7,7 @@ import { ServicesContext } from "../contexts/ServicesContext";
 
 const PTable = () => {
   const { user } = useAuth0(); // Get Auth0 user
-  const { services, setServices } = useContext(ServicesContext);
+  const { services, setServices,incidents } = useContext(ServicesContext);
   const [newServiceName, setNewServiceName] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -79,7 +79,9 @@ const PTable = () => {
   };
 
   const renderStatus = (status) => {
-    const option = statusOptions.find((opt) => opt.label === status) || statusOptions[0];  // Default to 'Operational' if status is empty or invalid
+    // Find the matching status from options or default to the first one (Operational)
+    const option = statusOptions.find((opt) => opt.label === status) || statusOptions[0];
+    
     return (
       <Badge bg={option.color} className="d-flex align-items-center gap-2">
         {option.icon} {status || "Operational"}  {/* Fallback to 'Operational' if status is empty */}
@@ -87,12 +89,34 @@ const PTable = () => {
     );
   };
   
-  const renderCurrentStatus = (currentStatus) => {
-    const option = currentStatusOptions.find((opt) => opt.label === currentStatus) || currentStatusOptions[0]; // Default to 'Resolved' if currentStatus is empty or invalid
+  
+  const renderIncidentsForService = (serviceId) => {
+    // Filter incidents related to the specific serviceId
+    const relatedIncidents = incidents.filter((incident) => incident.serviceId === serviceId);
+    const ServiceItem = services.find((service) => service.id === serviceId);
+    const currentStatus = ServiceItem.currentStatus
+
+    const option = currentStatusOptions.find((opt) => opt.label === ServiceItem.currentStatus) || currentStatusOptions[0];
+    
+    
     return (
-      <Badge bg={option.color} className="d-flex align-items-center gap-2">
-        {option.icon} {currentStatus || "Resolved"}  {/* Fallback to 'Resolved' if currentStatus is empty */}
-      </Badge>
+      <div>
+        {relatedIncidents.length > 0 ? (
+          <ul className="list-unstyled">
+            {relatedIncidents.map((incident) => (
+              <li key={incident.id} className="d-flex align-items-center gap-2">
+                {/* Render the incident's status */}
+                <Badge bg={option.color} className="d-flex align-items-center gap-2">
+                  {option.icon} {currentStatus || "Resolved"}  {/* Fallback to 'Resolved' if currentStatus is empty */}
+                </Badge>
+                {/* Display the incident title */}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <span>No incidents</span>
+        )}
+      </div>
     );
   };
 
@@ -203,7 +227,7 @@ const PTable = () => {
             <th>Overall Status</th>
             <th>Last Updated</th>
             <th>Update Overall Status</th>
-            {isAdmin && <th>Update Current Status</th>}
+            {/* {isAdmin && <th>Update Current Status</th>} */}
             {isAdmin && <th>Action</th>}
           </tr>
         </thead>
@@ -211,7 +235,8 @@ const PTable = () => {
           {services.map((service) => (
             <tr key={service.id}>
               <td>{service.serviceName}</td>
-              <td>{renderCurrentStatus(service.currentStatus)}</td>
+              <td>{renderIncidentsForService(service.id)}</td>
+              {/* <td>{renderCurrentStatus(service.currentStatus)}</td> */}
               <td>{renderStatus(service.status)}</td>
               <td>{service.lastUpdated}</td>
               <td>
@@ -226,7 +251,7 @@ const PTable = () => {
                   ))}
                 </Form.Select>
               </td>
-              {isAdmin && (
+              {/* {isAdmin && (
                 <td>
                   <Form.Select
                     value={service.currentStatus}
@@ -239,7 +264,7 @@ const PTable = () => {
                     ))}
                   </Form.Select>
                 </td>
-              )}
+              )} */}
               {isAdmin && (
                 <td>
                   <Button variant="danger" onClick={() => handleDeleteService(service.id)}>
