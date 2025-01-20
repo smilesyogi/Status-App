@@ -1,6 +1,6 @@
 import React from 'react';
 import Header from '../components/Header';
-import Sidebar from '../components/Sidebar';
+import AppSidebar from '../components/AppSidebar';
 import { Container, Row, Col } from 'react-bootstrap';
 import '../layouts/MainLayout.css';
 
@@ -18,7 +18,7 @@ const MainLayout = ({ children }) => {
       <Row className="h-100">
         {/* Sidebar */}
         <Col xs={2} className="sidebar">
-          <Sidebar />
+          <AppSidebar />
         </Col>
 
         {/* Main content area */}
