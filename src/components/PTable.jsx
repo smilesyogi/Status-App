@@ -145,8 +145,8 @@ const PTable = () => {
       axios
         .post(apiUrl, {
           serviceName: newServiceName,
-          status: "",  // Can be left empty in the request, since we'll reload data
-          currentStatus: "",  // Can be left empty in the request, since we'll reload data
+          status: "Operational",  // Can be left empty in the request, since we'll reload data
+          currentStatus: "Resolved",  // Can be left empty in the request, since we'll reload data
           lastUpdated: new Date().toLocaleString(),
         })
         .then(() => {

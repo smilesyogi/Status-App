@@ -22,14 +22,14 @@ const Overview = () => {
     { label: "Major Outage", color: "dark", icon: <FaPauseCircle />, value: 0 },
   ];
 
-  const renderStatus = (status) => {
-    const option = statusOptions.find((opt) => opt.label === status);
-    return (
-      <Badge bg={option.color} className="d-flex align-items-center gap-2">
-        {option.icon} {status}
-      </Badge>
-    );
-  };
+    const renderStatus = (status) => {
+      const option = statusOptions.find((opt) => opt.label === status) || statusOptions[0];  // Default to 'Operational' if status is empty or invalid
+      return (
+        <Badge bg={option.color} className="d-flex align-items-center gap-2">
+          {option.icon} {status || "Operational"}  {/* Fallback to 'Operational' if status is empty */}
+        </Badge>
+      );
+    };
 
   const getAverageStatus = () => {
     const majorOutages = services.filter(service => service.status === "Major Outage").length;
