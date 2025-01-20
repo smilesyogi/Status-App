@@ -52,7 +52,7 @@ const Overview = () => {
   };
 
   return (
-    <Container>
+    <Container style={{ textAlign: 'center' }}>
       <Alert variant={getAverageStatus() === "All services operational" ? "success" : getAverageStatus() === "Site is Down" ? "danger" : "warning"}>
         <strong>{getAverageStatus()} ({percentageOperational()}%)</strong>
       </Alert>

@@ -17,7 +17,7 @@ const App = () => {
   return (
     <ServicesProvider>
       <Router>
-        <div style={{ textAlign: 'center' }}>
+        <div>
           {isAuthenticated ? '' : <h1>Status Page App</h1>}
           <Routes>
             <Route

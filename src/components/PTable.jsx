@@ -176,7 +176,7 @@ const PTable = () => {
   const percentage = calculatePercentage();
 
   return (
-    <div>
+    <div style={{ textAlign: 'center' }} >
       <Alert variant={getAverageStatus() === "All services operational" ? "success" : getAverageStatus() === "Site is Down" ? "danger" : "warning"}>
         <strong>{getAverageStatus()} {`(${percentage}%)`}</strong> | 
         Operational: {statusCounts.operational}, 

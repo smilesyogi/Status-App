@@ -37,16 +37,16 @@ const AppSidebar = () => {
     <SidebarProvider>
       <Sidebar>
         <SidebarContent>
-          <SidebarGroup>
+          <SidebarGroup className="p-0">
             <SidebarGroupContent>
-              <SidebarMenu>
+              <SidebarMenu  >
                 {items.map((item) => {
                   const IconComponent = icons[item.icon];
                   return (
-                    <SidebarMenuItem key={item.title}>
+                    <SidebarMenuItem key={item.title} >
                       <SidebarMenuButton asChild>
-                        <Link to={item.url} className="flex items-center space-x-2"> {/* Add spacing here */}
-                          <IconComponent className="w-5 h-5" />
+                        <Link style={{ color: 'inherit', textDecoration: 'inherit'}} to={item.url} className="flex text-left space-x-4"> {/* Add spacing here */}
+                          <IconComponent className="w-5 h-5 m-1" />
                           <span>{item.title}</span>
                         </Link>
                       </SidebarMenuButton>
